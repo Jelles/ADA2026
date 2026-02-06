@@ -16,7 +16,7 @@ spec:
         app: prediction-ui
     spec:
       containers:
-      - image: europe-west1-docker.pkg.dev/robotic-facet-472112-c6/labrepo/prediction-ui # Docker image name, that we pushed to GCR - use your project id, location, and repository
+      - image: europe-west4-docker.pkg.dev/robotic-facet-472112-c6/labrepo/prediction-ui:0.0.1 # Docker image name, that we pushed to GCR - use your project id, location, and repository
         name: prediction-ui
         imagePullPolicy: Always
         ports:
