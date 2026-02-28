@@ -4,41 +4,32 @@ from fastapi import status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
+from pdmodels.status_req import STATUS_CREATED
 from daos.delivery_dao import DeliveryDAO
 from daos.status_dao import StatusDAO
 from db import Session
 from pdmodels.delivery_req import DeliveryReq
-from pdmodels.status_enum import STATUS_CREATED
 
 
 class Delivery:
     @staticmethod
     def create(d_req: DeliveryReq):
         session = Session()
-        d_id = d_req.id
-        delivery = session.query(DeliveryDAO).filter(DeliveryDAO.id == d_req.id).first()
-        if delivery:
-            session.close()
-            return JSONResponse(content=jsonable_encoder({'message': f'There is already delivery with id {d_id}'}),
-                                status_code=status.HTTP_403_FORBIDDEN)
-        else:
-            delivery = DeliveryDAO(d_req.id, d_req.customer_id, d_req.provider_id, d_req.package_id,
-                                   datetime.now(),
-                                   datetime.strptime(d_req.delivery_time, '%Y-%m-%d %H:%M:%S.%f'),
-                                   StatusDAO(d_req.id, STATUS_CREATED, datetime.now()))
-            session.add(delivery)
-            session.commit()
-            session.refresh(delivery)
-            session.close()
-        return JSONResponse(content=jsonable_encoder({'delivery_id': delivery.id}),
-                            status_code=status.HTTP_201_CREATED)
+        delivery = DeliveryDAO(d_req.customer_id, d_req.provider_id, d_req.package_id, datetime.now(),
+                               datetime.strptime(d_req.delivery_time, '%Y-%m-%d %H:%M:%S.%f'),
+                               StatusDAO(STATUS_CREATED, datetime.now()))
+        session.add(delivery)
+        session.commit()
+        session.refresh(delivery)
+        session.close()
+        return JSONResponse(content=jsonable_encoder({'delivery_id': delivery.id}), status_code=status.HTTP_201_CREATED)
 
     @staticmethod
     def get(d_id):
         session = Session()
         # https://docs.sqlalchemy.org/en/14/orm/query.html
         # https://www.tutorialspoint.com/sqlalchemy/sqlalchemy_orm_using_query.htm
-        delivery = session.query(DeliveryDAO).filter(DeliveryDAO.id == int(d_id)).first()
+        delivery = session.query(DeliveryDAO).filter(DeliveryDAO.id == d_id).first()
 
         if delivery:
             status_obj = delivery.status
@@ -64,7 +55,7 @@ class Delivery:
     @staticmethod
     def delete(d_id):
         session = Session()
-        effected_rows = session.query(DeliveryDAO).filter(DeliveryDAO.id == int(d_id)).delete()
+        effected_rows = session.query(DeliveryDAO).filter(DeliveryDAO.id == d_id).delete()
         session.commit()
         session.close()
         if effected_rows == 0:

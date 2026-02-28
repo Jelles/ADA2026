@@ -3,12 +3,13 @@ from fastapi import FastAPI
 
 from db import Base, engine
 from pdmodels.delivery_req import DeliveryReq
-from pdmodels.status_enum import StatusEnum
+from pdmodels.status_req import StatusModel
 from resources.delivery import Delivery
 from resources.status import Status
 
 app = FastAPI()
 Base.metadata.create_all(engine)
+
 
 @app.post("/deliveries")
 def create_delivery(d_req: DeliveryReq):
@@ -21,8 +22,8 @@ def get_delivery(d_id: int):
 
 
 @app.put('/deliveries/{d_id}/status')
-def update_delivery_status(d_id: int, status: StatusEnum):
-    return Status.update(d_id, status)
+def update_delivery_status(d_id: int, new_status: StatusModel):
+    return Status.update(d_id, new_status.status)
 
 
 @app.delete('/deliveries/<d_id>')

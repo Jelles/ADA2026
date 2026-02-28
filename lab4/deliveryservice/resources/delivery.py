@@ -4,7 +4,7 @@ from fastapi import status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-from pdmodels.status_enum import STATUS_CREATED
+from pdmodels.status_req import STATUS_CREATED
 from daos.delivery_dao import DeliveryDAO
 from daos.status_dao import StatusDAO
 from db import Session
