@@ -19,7 +19,7 @@ main:
         assign:
             - project: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
             - location: "us-central1"
-            - model: "gemini-2.0-flash"
+            - model: "gemini-2.5-flash-lite"
             - histories: {}
     - loop_over_countries:
         parallel:
